@@ -8,42 +8,34 @@ client = TestClient(app)
 TEST_FILES_DIR = Path("tests/test_files")
 
 
-@pytest.fixture
-def test_wav_long() -> Path:
-    return TEST_FILES_DIR / "wav_long.wav"
+wav_short = TEST_FILES_DIR / "wav_short.wav"
+mp3_short = TEST_FILES_DIR / "mp3_short.mp3"
+aif_short = TEST_FILES_DIR / "aif_short.aif"
+m4a_short = TEST_FILES_DIR / "m4a_short.m4a"
+
+wav_long = TEST_FILES_DIR / "wav_long.wav"
+mp3_long = TEST_FILES_DIR / "mp3_long.mp3"
+aif_long = TEST_FILES_DIR / "aif_long.aif"
+m4a_long = TEST_FILES_DIR / "m4a_long.m4a"
 
 
-@pytest.fixture
-def test_mp3_long() -> Path:
-    return TEST_FILES_DIR / "mp3_long.mp3"
-
-
-@pytest.fixture
-def test_wav_short() -> Path:
-    return TEST_FILES_DIR / "wav_short.wav"
-
-
-@pytest.fixture
-def test_mp3_short() -> Path:
-    return TEST_FILES_DIR / "mp3_short.mp3"
-
-
-def test_wav_to_mp3_conversion(test_wav_short: Path) -> None:
+@pytest.mark.parametrize("test_short", [wav_short, mp3_short, aif_short, m4a_short])
+def test_convert_to_mp3(test_short: Path) -> None:
     """Test converting WAV to MP3"""
-    with open(test_wav_short, "rb") as f:
+    with open(test_short, "rb") as f:
         files = {"file": ("test.wav", f, "audio/wav")}
         response = client.post("/convert/mp3", files=files)
 
     assert response.status_code == 200
     assert response.headers["content-type"] == "audio/mp3"
     assert response.headers["content-disposition"] == "attachment; filename=converted.mp3"
-    # Best practice: Validate the output file format
     assert magic.from_buffer(response.content, mime=True) == "audio/mpeg"
 
 
-def test_mp3_to_wav_conversion(test_mp3_short: Path) -> None:
+@pytest.mark.parametrize("test_short", [wav_short, mp3_short, aif_short, m4a_short])
+def test_convert_to_wav(test_short: Path) -> None:
     """Test converting MP3 to WAV"""
-    with open(test_mp3_short, "rb") as f:
+    with open(test_short, "rb") as f:
         files = {"file": ("test.mp3", f, "audio/mpeg")}
         response = client.post("/convert/wav", files=files)
 
@@ -62,10 +54,23 @@ def test_invalid_input_format() -> None:
     assert response.status_code == 400
 
 
-def test_invalid_output_format(test_wav_short: Path) -> None:
+@pytest.mark.parametrize("test_short", [wav_short, mp3_short, aif_short, m4a_short])
+def test_invalid_output_format(test_short: Path) -> None:
     """Test requesting an unsupported output format"""
-    with open(test_wav_short, "rb") as f:
+    with open(test_short, "rb") as f:
         files = {"file": ("test.wav", f, "audio/wav")}
         response = client.post("/convert/flac", files=files)
 
     assert response.status_code == 422
+
+
+@pytest.mark.parametrize("test_long", [wav_long, mp3_long, aif_long, m4a_long])
+def test_audio_duration_exceeded(test_long: Path) -> None:
+    """Test uploading an audio file that exceeds the allowed duration"""
+
+    with open(test_long, "rb") as f:
+        files = {"file": ("test.wav", f, "audio/wav")}
+        response = client.post("/convert/mp3", files=files)
+
+    assert response.status_code == 400
+    assert response.json() == {"message": "Audio duration exceeds 30 seconds limit"}
