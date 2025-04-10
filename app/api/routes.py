@@ -1,10 +1,12 @@
+import io
+import logging
+from typing import Literal
+
 from fastapi import APIRouter, UploadFile
+from fastapi.responses import Response
+
 from app.exceptions import AudioException
 from app.services.audio_converter import audio_converter
-from fastapi.responses import Response
-from typing import Literal
-import logging
-import io
 
 router = APIRouter()
 logger = logging.getLogger(__name__)

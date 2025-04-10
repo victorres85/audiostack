@@ -1,5 +1,6 @@
-from pydub import AudioSegment
 from io import BytesIO
+
+from pydub import AudioSegment
 
 from app.exceptions import AudioException
 

@@ -1,7 +1,9 @@
+from pathlib import Path
+
+import magic
 import pytest
 from fastapi.testclient import TestClient
-from pathlib import Path
-import magic
+
 from app.main import app
 
 client = TestClient(app)

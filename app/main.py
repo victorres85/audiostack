@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Request
-from app.api.routes import router
 from fastapi.responses import JSONResponse
+
+from app.api.routes import router
 from app.exceptions import AudioException
 
 app = FastAPI(
