@@ -1,0 +1,14 @@
+fastapi==0.115.12
+python-multipart==0.0.20
+uvicorn==0.34.0
+pydub==0.25.1
+python-magic==0.4.27
+httpx==0.28.1
+audioop-lts==0.2.1
+
+# dev stuff
+pytest==8.3.5
+pre-commit==3.8.0
+black==24.4.2
+mypy==1.10.1
+flake8-pyproject==1.2.3
