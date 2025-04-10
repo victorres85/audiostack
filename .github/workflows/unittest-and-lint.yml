@@ -23,7 +23,7 @@ jobs:
 
       - name: Install packages
         run: |
-          apt-get update && apt-get install -y ffmpeg libmagic-dev
+          sudo apt-get update && sudo apt-get install -y ffmpeg libmagic-dev
 
       - name: Install dependencies
         run: |
