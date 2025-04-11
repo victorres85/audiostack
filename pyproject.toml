@@ -26,5 +26,4 @@ testpaths = ["tests"]
 [tool.isort]
 profile = "black"
 filter_files = true
-skip_glob = ["migrations"]
 

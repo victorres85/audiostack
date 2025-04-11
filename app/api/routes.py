@@ -1,5 +1,4 @@
 import io
-import logging
 from typing import Literal
 
 from fastapi import APIRouter, UploadFile
@@ -9,7 +8,6 @@ from app.exceptions import AudioException
 from app.services.audio_converter import audio_converter
 
 router = APIRouter()
-logger = logging.getLogger(__name__)
 
 
 @router.post("/convert/{output_format}")
